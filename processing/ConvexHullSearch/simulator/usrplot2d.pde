@@ -1,0 +1,142 @@
+import java.util.Arrays;
+import java.util.List;
+
+
+class MyGPoint {
+ public String _label;
+ public boolean _isactive;
+ public float _px;
+ public float _py;
+ 
+ public MyGPoint(String label) {
+  this(label, 0, 0, false);
+ }
+ 
+ public MyGPoint(String label, float px, float py, boolean isactive) {
+   this._label = label;
+   this._isactive = isactive;
+   this._px = px;
+   this._py = py;
+ }
+}
+
+
+class MyGraphComposition {
+ private List<MyGPoint> _points;
+  
+ public MyGraphComposition() {  
+  _points = new ArrayList<MyGPoint>();
+ }  
+ 
+ public boolean RegisterPoints(MyGPoint[] points, int minX, int minY, int maxX, int maxY)
+ {
+  List<MyGPoint> _tmppoints = new ArrayList<MyGPoint>();
+  for( MyGPoint obj: points){
+   if( obj._px > minX && obj._py > minY && obj._px < maxX && obj._py < maxY && obj._isactive) {
+    _tmppoints.add(obj);
+   } 
+  }
+  
+   
+  return _points.addAll(_tmppoints);
+ }
+
+ public MyGPoint[] GetPoints() {
+  MyGPoint[] obj = new MyGPoint[_points.size()];
+  obj = _points.toArray(obj);
+  return obj; 
+ }
+}
+
+
+
+
+
+
+class MyPlot2dArea
+{
+  public int minX = -300;
+  public int minY = -300;
+  public int maxX = 300;
+  public int maxY = 300;
+  
+  public MyPlot2dArea()
+  { 
+  }
+  
+  public MyGraphComposition LoadTableFile(String filepath)
+  {
+   String[] lines = loadStrings(filepath);
+   
+   MyGraphComposition obj = new MyGraphComposition();
+   
+   ArrayList<MyGPoint> pobj = new ArrayList<MyGPoint>();
+   for( String line : lines ) {
+     
+    String[] elem = split(line, ",");
+    float px = parseFloat(elem[1]);
+    float py = parseFloat(elem[2]);
+    MyGPoint tmp = new MyGPoint(elem[0], px, py, true);
+    
+    println(elem[1]);
+    println(float("20.0") + "");
+    
+    pobj.add(tmp);
+   }
+   
+   MyGPoint[] pobj_array = new MyGPoint[pobj.size()];
+   pobj_array = pobj.toArray(pobj_array);
+   obj.RegisterPoints(pobj_array, minX, minY, maxX, maxY);
+   
+   return obj;
+  }
+  
+  public MyGraphComposition GetComposition()
+  {
+    MyGraphComposition obj = new MyGraphComposition();
+
+    MyGPoint[] pnts = new MyGPoint[]
+     {
+       new MyGPoint("1a", -250, -250, true),
+       new MyGPoint("1b", -150, -250, true),
+       new MyGPoint("1c", -50, -250, true),
+       new MyGPoint("1d",  50, -250, true),
+       new MyGPoint("1e",  150, -250, true),
+       new MyGPoint("1f",  250, -250, true),
+       new MyGPoint("2a", -250, -150, true),
+       new MyGPoint("2b", -150, -150, false),
+       new MyGPoint("2c", -50, -150, true),
+       new MyGPoint("2d",  50, -150, true),
+       new MyGPoint("2e",  150, -150, true),
+       new MyGPoint("2f",  250, -150, true),
+       new MyGPoint("3a", -250, -50, true),
+       new MyGPoint("3b", -150, -50, true),
+       new MyGPoint("3c", -50, -50, true),
+       new MyGPoint("3d",  50, -50, true),
+       new MyGPoint("3e",  150, -50, true),
+       new MyGPoint("3f",  250, -50, true),
+       new MyGPoint("4a", -250,  50, true),
+       new MyGPoint("4b", -150,  50, true),
+       new MyGPoint("4c", -50,  50, true),
+       new MyGPoint("4d",  50,  50, true),
+       new MyGPoint("4e",  150,  50, true),
+       new MyGPoint("4f",  250,  50, true),
+       new MyGPoint("5a", -250,  150, true),
+       new MyGPoint("5b", -150,  150, true),
+       new MyGPoint("5c", -50,  150, true),
+       new MyGPoint("5d",  50,  150, true),
+       new MyGPoint("5e",  150,  150, true),
+       new MyGPoint("5f",  250,  150, true),
+       new MyGPoint("6a", -250,  250, true),
+       new MyGPoint("6b", -150,  250, true),
+       new MyGPoint("6c", -50,  250, true),
+       new MyGPoint("6d",  50,  250, true),
+       new MyGPoint("6e",  150,  250, true),
+       new MyGPoint("6f",  250,  250, true),
+     };
+    
+    obj.RegisterPoints(pnts, minX, minY, maxX, maxY);
+    
+    return obj;
+  }
+}
