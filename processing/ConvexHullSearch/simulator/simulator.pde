@@ -1,3 +1,5 @@
+
+
 //import java.awt.*;
 //import javax.swing.*;
 
@@ -14,6 +16,7 @@ UsrKeyMapper __mykeymapper = new UsrKeyMapper();
 // PlotArea
 MyPlot2dArea plotobj = new MyPlot2dArea();
 MyGPoint[] pointsobj = null;
+MyGLine[] linesobj = null;
 boolean isplabel = false;
 boolean iscordpoints = false;
 
@@ -24,15 +27,18 @@ void setup()
  size(620,720);
  colorMode(RGB, 255);
  
- pointsobj = plotobj.GetComposition().GetPoints();
 
  __mykeymapper.initialize();
-
- frameRate(1);
+ pointsobj = plotobj.LoadTableFile("test.txt").GetPoints(); 
+ 
+ 
+ pointsobj = plotobj.GetComposition().GetPoints();
+ linesobj = plotobj.GetComposition().GetLines();
+ 
+ frameRate(1);      
 }
 
-void draw()
-{
+void draw() {
  fill(0, 0, 0);
  background( 50, 180, 250);
 
@@ -68,7 +74,10 @@ void draw()
    text( "(" + pnt._px + " ," + pnt._py + ")", cenx + pnt._px - 30, ceny - pnt._py + 14 ); 
   }
  }
-
+ 
+ for (MyGLine ln: linesobj ) {
+  line( cenx + ln._bx, ceny - ln._by, cenx + ln._ex, ceny - ln._ey);
+ }
 
  // status
  fill(255,255,190);
@@ -87,7 +96,7 @@ void draw()
 
 boolean isAvailableForDebugKey(int keycode)
 {
- return (keycode >= 'a' && keycode <= 'z' || keycode >= 'A' && keycode <= 'Z' || keycode == '/' || keycode == ' ' || keycode == '.' || keycode >= 0 || keycode <= 9); 
+ return (keycode >= 'a' && keycode <= 'z' || keycode >= 'A' && keycode <= 'Z' || keycode == '/' || keycode == ' ' || keycode == '.' || keycode == '_' || (keycode >= '0' && keycode <= '9')); 
 }
 
 void keyPressed()
@@ -95,7 +104,6 @@ void keyPressed()
  if ( __mykeymapper.getState(ENTER) )
  {
    _disptext = isAvailableForDebugKey(keyCode) ? (_disptext + key) : _disptext;
-   _disptext = (keyCode == BACKSPACE && _disptext.length() != 0) ? _disptext.substring(0, _disptext.length()-1) : _disptext;
    frameRate(60);
  }
  else
@@ -110,19 +118,22 @@ void keyPressed()
 void keyReleased() 
 {
  __mykeymapper.putState(keyCode, false);
+
+ if (keyCode == BACKSPACE && _disptext.length() != 0) {
+  _disptext = _disptext.substring(0, _disptext.length()-1);
+ }
  
  if( keyCode == DELETE ) {
   _disptext = ""; 
  }
  if( keyCode == ENTER) {
-  String[] obj = _disptext.split(" ", 0);
+  String[] obj = split(_disptext, " ");
   
   // write procedures after debug typing
   if(obj.length >= 2) {
     if(obj[0].equals("plabel")) {
      if( obj[1].equals("on")) {
       isplabel = true;
-      print("aa");
      }
      else if(obj[1].equals("off")) {
       isplabel = false;
@@ -138,12 +149,27 @@ void keyReleased()
     }
     if(obj[0].equals("readcsv")){
      pointsobj = plotobj.LoadTableFile(obj[1]).GetPoints(); 
+     linesobj = plotobj.GetComposition().GetLines();
     }
+    if(obj[0].equals("randomdata")) {
+     PrintWriter rfile;
+     rfile = createWriter("random.txt");
+     for( int i = 0; i < int(obj[1]);i ++ ) {
+      rfile.println( i + "," + random(-280, 280) + "," + random(-280, 280) + ",");   
+      rfile.flush();
+     }
+     rfile.close();
+    }
+    
   }
   
   if(obj.length >= 1){
     if(obj[0].equals("exit")) {
      exit(); 
+    }
+    if(obj[0].equals("convexhullsearch")) {
+     plotobj.ConvexHullSearch();    
+     linesobj = plotobj.GetComposition().GetLines();
     }
   }
  }
