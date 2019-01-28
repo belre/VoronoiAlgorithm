@@ -29,7 +29,7 @@ void setup()
  
 
  __mykeymapper.initialize();
- pointsobj = plotobj.LoadTableFile("test.txt").GetPoints(); 
+ pointsobj = plotobj.LoadTableFile("data/test.txt").GetPoints(); 
  
  
  pointsobj = plotobj.GetComposition().GetPoints();
